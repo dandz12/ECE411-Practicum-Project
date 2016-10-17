@@ -1,0 +1,18 @@
+// There is a more elegant way to do the while loop, but I chose to do it this way for clarity.
+
+#include <avr/io.h>         // Include header file for AVR architecture chips
+#include <util/delay.h>     // Include header file with utilities defining delay libraries
+
+
+int main(void)              // Begin main function
+{
+  DDRB = 0b00000001;        // Data Direction Register, port B, set pin 0 as output
+     
+    while (1)               // Infinite while loop to continuously run chip
+    {
+      PORTB = 0b00000001;   // Set level of pin PB0 to high (binary notation, each bit represents pins PB0-7, where 0 = low, 1 = high)
+      _delay_ms(10);        // Delay for 10ms
+      PORTB = 0B0000000;    // Set level of pin PB0 to low (binary notation, each bit represents pins PB0-7, where 0 = low, 1 = high)
+      _delay_ms(10);        // Delay for 10ms
+    }
+}
