@@ -1,0 +1,26 @@
+
+// Useful Links //
+
+Data sheet for ATmega328
+http://www.atmel.com/images/atmel-8271-8-bit-avr-microcontroller-atmega48a-48pa-88a-88pa-168a-168pa-328-328p_datasheet_summary.pdf
+
+Atmel Studio tutorials
+http://www.atmel.com/webdoc/atmelstudio/atmelstudio.section.fkg_txp_kc.html
+
+Arduino as AVR ISP
+https://www.arduino.cc/en/Tutorial/ArduinoISP
+
+Arduino code reference
+https://www.arduino.cc/en/Reference/HomePage
+
+AVR Dragon ISP
+http://www.atmel.com/webdoc/avrdragon/index.html
+
+Youtube tutorials on ATmega projects and other cool stuff
+https://www.youtube.com/channel/UCC7ifdmN7ebFo-eXBUZkeiw
+
+ECE411 class website
+http://web.cecs.pdx.edu/~faustm/ece411/
+
+WinAVR download
+https://sourceforge.net/projects/winavr/files/
