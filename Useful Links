@@ -1,8 +1,11 @@
 
 // Useful Links //
 
-Data sheet for ATmega328
+Data sheet (summary - 50 pages) for ATmega328
 http://www.atmel.com/images/atmel-8271-8-bit-avr-microcontroller-atmega48a-48pa-88a-88pa-168a-168pa-328-328p_datasheet_summary.pdf
+
+Data sheet (full - 444 pages) for ATmega328P
+http://www.atmel.com/Images/Atmel-42735-8-bit-AVR-Microcontroller-ATmega328-328P_datasheet.pdf
 
 Atmel Studio tutorials
 http://www.atmel.com/webdoc/atmelstudio/atmelstudio.section.fkg_txp_kc.html
