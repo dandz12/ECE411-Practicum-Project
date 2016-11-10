@@ -1,0 +1,55 @@
+/*
+ * Servo Testing
+ *
+ * 
+ * Author : Dwayne Hoeck
+ */ 
+
+#define F_CPU 1000000UL							// Defines CPU I/O speed
+#include <avr/io.h>								// AVR I/O header file
+#include <util/delay.h>							// Delay utilities header file
+#include <avr/interrupt.h>						// AVR interrupts header file
+
+#define LED_ON      PORTD |= (1 << PORTD3)		// Writes high to pin D3, used in PWM_Init() function
+#define LED_OFF     PORTD &= ~(1 << PORTD3)		// Writes low to pin D3, used in PWM_Init() function
+#define LED_TOGGLE  PIND |= (1 << PIND3)			// Toggles pin D3, used in Timer_Frequency() function
+
+ISR(TIMER1_COMPA_vect)							// Interrupt service routine for OCRnA (output compare register A)
+{													
+	LED_ON;										// Macro turns LED on, defined above
+}
+
+ISR(TIMER1_COMPB_vect)							// Interrupt service routine for OCRnB (output compare register B)
+{
+	LED_OFF;										// Macro turns LED off, defined above
+}
+
+void Timer_Frequency(uint8_t freq)				// Function causes output of desired frequency
+{
+	TCCR1B |= (1 << CS11) | (1 << WGM12);		// Sets CS(clock set) prescaler and WGM (wave generation mode) bits in TCCR1B (timer/counter control register)
+	TIMSK1 |= (1 << OCIE1A);						// Sets OCIE1A (output compare interrupt enable) register in TIMSK1 (timer mask) register
+	OCR1A = (F_CPU/(freq*2*8)-1);				// Populates OCR1A (output compare) register with TOP value of counter
+}
+
+void PWM_Init(void)								// Function for PWM (pulse width modulation)
+{
+	TCCR1B |= (1 << CS10) | (1 << WGM12);		// Sets CS(clock set) prescaler and WGM (wave generation mode) bits in TCCR1A (timer/counter control register)
+	TIMSK1 |= (1 << OCIE1A) | (1 << OCIE1B);		// Sets OCIE1x (output compare interrupt enable) register in TIMSK1 (timer mask) register
+	OCR1A =	310;									// Populates OCR1A (output compare) register with TOP value of counter for total PWM period
+	OCR1B = 10;									// Populates OCR1B (output compare) register with PWM pulse width (range: 10 - 50)
+}
+
+int main(void)									// Main function
+{
+	DDRD |= (1 << DDD3);							// Set pin D3 as output (data direction register, PORT B, PIN 3)
+	
+	sei();										// Global interrupts enable
+
+	Timer_Frequency(5);							// Input is desired frequency (Hz)
+	PWM_Init();									// PWM (pulse width modulation) function
+	
+    while (1) 
+    {
+			
+	}
+}
