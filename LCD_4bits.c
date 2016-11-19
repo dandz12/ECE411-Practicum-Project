@@ -1,85 +1,87 @@
+#define F_CPU 1000000UL 
 #include <avr/io.h>
 #include <util/delay.h>
 
-#define ctrl PORTD
-#define en 2                         // enable signal
-#define rs 0                     // register select signal
+#define ctrl PORTD				//4 bits data line = D7-D4 of MCU
+#define en 0                    //enable signal = D0 of MCU
+#define rs 2                    //register select signal = D2 of MCU
+								//read write signal = GND
 
-void LCD_cmd(unsigned char cmd);
-void lcd_ini(void);
-void LCD_write(unsigned char data);
-void dis_cmd(char);
-void dis_data(char);
-void LCD_write_string(unsigned char *str);
+void lcd_ini(void);						//initialize LCD
+void LCD_cmd(unsigned char cmd);		//send 4bits command in 4bits mode (half of a command)
+void LCD_write(unsigned char data);		//send 4bits data in 4bits mode (half of a 8 bit data)
+void dis_cmd(char);						//send full 8bits command in 4bits mode
+void dis_data(char);					//send full 8bits data in 4bits mode	
+void LCD_write_string(char *str);
 
-void main()
+int main()
 {
-	DDRD=0xFF;                                  // setting the port c                                                                       // setting for port D
+	DDRD=0xFF;					//Set Port D as output                                 
 	
-	lcd_ini();                                 // initialization of LCD
-	_delay_ms(30);                        // delay of 50 mili seconds
-	dis_data('b');
-
+	lcd_ini();                  //Initialization of LCD
+	_delay_ms(30);              // Wait 30ms to make sure that LCD is initialized
+	
+	LCD_write_string("Hello World 15");         // function to print string on LCD
 	while(1);
+	return 0;
 }
 
-void lcd_ini(void)
+void lcd_ini(void) //initialize LCD
 {
-	dis_cmd(0x02); // to initialize LCD in 4-bit mode.
+	dis_cmd(0x02); //0x02 = set LCD in 4 bits mode
 	_delay_ms(1);
-	dis_cmd(0x28); //to initialize LCD in 2 lines, 5X7 dots and 4bit mode.
+	dis_cmd(0x28); //0x28 = 2 lines, 5x7 dots, 4 bits mode
 	_delay_ms(1);
-	dis_cmd(0x01);                                 // clear LCD
+	dis_cmd(0x01); //0x01 = clear LCD
 	_delay_ms(1);
-	dis_cmd(0x0E);                        // cursor ON
+	dis_cmd(0x0E); //0x0E = cursor ON
 	_delay_ms(1);
-	dis_cmd(0x80);                     // —8 go to first line and –0 is for 0th position
+	dis_cmd(0x80); //0x80 = first lines, 0th position
 	_delay_ms(1);
 	return;
 }
 
-void dis_cmd(char cmd_value)
+void dis_cmd(char cmd_value)	//send full 8bits command in 4bits mode
 {
 	char cmd_value1;
 	cmd_value1 = cmd_value & 0xF0;          //mask lower nibble
 	//because PA4-PA7 pins are used.
-	LCD_cmd(cmd_value1);               // send to LCD
-	cmd_value1 = ((cmd_value<<4) & 0xF0);     //shift 4-bit and
-	//mask
-	LCD_cmd(cmd_value1);               // send to LCD
+	LCD_cmd(cmd_value1);					//send to LCD, use LCD_cmd
+	cmd_value1 = ((cmd_value<<4) & 0xF0);   //shift 4-bit and mask the others 4
+	LCD_cmd(cmd_value1);					//send to LCD, use LCD_cmd
 }
-void dis_data(char data_value)
+void dis_data(char data_value)  //send full 8bits data in 4bits mode	
 {
-	char data_value1;
-	data_value1=data_value & 0xF0;
-	LCD_write(data_value1);
-	data_value1=((data_value<<4) & 0xF0);
-	LCD_write(data_value1);
+	char data_value1;							
+	data_value1=data_value & 0xF0;			//mask lower nibble
+	LCD_write(data_value1);					//send to LCD, use LCD_write
+	data_value1=((data_value<<4) & 0xF0);	//shift 4bit and mask the others 4
+	LCD_write(data_value1);					//send to LCD, use LCD_write
 }
 
-void LCD_cmd(unsigned char cmd)
+void LCD_cmd(unsigned char cmd)  //send 4bits command in 4bits mode (half of a command)
 {
-	ctrl=cmd;
-	ctrl&=~(1<<rs);
-	ctrl|=(1<<en);
+	ctrl=cmd;					 //output the data					
+	ctrl&=~(1<<rs);				 //rs = high (sending command)
+	ctrl|=(1<<en);				 //create falling edge in enable (set to high -> low)
 	_delay_ms(1);
 	ctrl&=~(1<<en);
 	_delay_ms(40);
 	return;
 }
 
-void LCD_write(unsigned char data)
+void LCD_write(unsigned char data) //send 4bits data in 4bits mode (half of a 8 bit data)
 {
-	ctrl= data;
-	ctrl|=(1<<rs);
-	ctrl|=(1<<en);
+	ctrl= data;					//output the data	
+	ctrl|=(1<<rs);				//rs = low (sendding datas)
+	ctrl|=(1<<en);				//create falling edge in enable (set to high -> low)
 	_delay_ms(1);
 	ctrl&=~(1<<en);
 	_delay_ms(40);
 	return ;
 }
 
-void LCD_write_string(unsigned char *str)             //store address value of the string in pointer *str
+void LCD_write_string(char *str)             //store address value of the string in pointer *str
 {
 	int i=0;
 	while(str[i]!='\0')                               // loop will go on till the NULL character in the string
