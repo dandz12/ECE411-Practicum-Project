@@ -68,9 +68,9 @@ int main(void)
 
 			/*
 			if(codeIn[i] == -1);
-				//reset
+				//change
 			else if(codeIn[i] == -2)
-				//change				
+				//reset				
 				*/
 		}
 		
@@ -91,7 +91,8 @@ int main(void)
 int getkey(void)
 {
 	volatile int num = 0;
-		
+	
+	//loop and wait for a button
 	while(1)
 	{
 		
@@ -140,14 +141,19 @@ int getkey(void)
 				case 0b10111011:
 					num = 9;
 					break;
-				case 0b11100111:
+				case 0b11010111:
 					num = 0;
 					break;
-				//need to add * and #
+				case 0b11100111:	//*
+					num = -1;
+					break;
+				case 0b10110111:	//#
+					num = -2;
+					break;
 				//* should change passcode
 				//#should reset
 				default:	//default should be reset
-					num = 0;
+					num = -2;
 					break;
 			}
 
