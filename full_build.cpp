@@ -58,7 +58,7 @@ int main(void)
 	LCD_write_string("Passcode please:");         // function to print string on LCD	
 		
 	/* Replace with your application code */
-	while (1)
+	while (1)					//needs to be if while switch flipped
 	{
 
 		
