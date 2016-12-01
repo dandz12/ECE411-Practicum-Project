@@ -58,7 +58,7 @@ int main(void)
 	LCD_write_string("Passcode please:");         // function to print string on LCD	
 		
 	/* Replace with your application code */
-	while (1)					//needs to be if while switch flipped
+	while (1)
 	{
 
 		
@@ -172,7 +172,7 @@ int getkey(void)
 			
 			PORTB ^= 0x30;
 			PORTC ^= 0x3F;
-			_delay_ms(200);				//we need to delay so we don't get double input
+			_delay_ms(500);				//we need to delay so we don't get double input
 			
 			return num;
 		}
