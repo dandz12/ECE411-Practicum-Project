@@ -24,7 +24,6 @@
 int code[length] = {1, 2, 3, 4};
 
 int getkey(void);
-int testCode(int *);
 void blink(int);
 void unlock(void);
 void PWM_Init(void);
@@ -39,6 +38,7 @@ void LCD_write_string(char *str);
 int main(void)
 {
 	int codeIn[length];
+	int result = 0;
 
 	sei();					//enable interrupts
 	//DDRD |= (1 << DDD3);
@@ -74,14 +74,21 @@ int main(void)
 				*/
 		}
 		
-		if((testCode(codeIn) == 1))
+		for(int i = 0; i < length; i++)
+		{
+			if(code[i] != codeIn[i])
+					result = 1;			
+		}
+		
+		if(!result)
 		{
 			unlock();
 			PWM_Init();									// PWM (pulse width modulation) function
-
 		}
 		else
 			PWM_Init();									// PWM (pulse width modulation) function
+			
+		result = 0;
 		
 		
 	}
@@ -112,7 +119,7 @@ int getkey(void)
 			num |= (PINC << 2);				//set the bitpattern for the second part of keypad array
 			
 			//determine what button was pushed based on bitpattern
-			switch (num)
+			switch (num & 0xFF)
 			{
 				case 0b11101110:
 					num =1;
@@ -170,20 +177,6 @@ int getkey(void)
 			return num;
 		}
 	}
-}
-
-int testCode(int *codeIn)
-{
-	int result = 1;
-	
-	for(int i = 0; i < length; i ++)
-	{
-		if((code[i] =! codeIn[i]))
-			result = 0;		
-	}
-	
-	return result;
-	
 }
 
 void blink(int num)
@@ -266,7 +259,7 @@ void LCD_cmd(unsigned char cmd)  //send 4bits command in 4bits mode (half of a c
 void LCD_write(unsigned char data) //send 4bits data in 4bits mode (half of a 8 bit data)
 {
 	ctrl= data;					//output the data
-	ctrl|=(1<<rs);				//rs = low (sendding datas)
+	ctrl|=(1<<rs);				//rs = low (sending data)
 	ctrl|=(1<<en);				//create falling edge in enable (set to high -> low)
 	_delay_ms(1);
 	ctrl&=~(1<<en);
