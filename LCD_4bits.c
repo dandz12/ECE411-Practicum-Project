@@ -1,10 +1,10 @@
-#define F_CPU 1000000UL 
+1#define F_CPU 1000000UL 
 #include <avr/io.h>
 #include <util/delay.h>
 
 #define ctrl PORTD				//4 bits data line = D7-D4 of MCU
 #define en 0                    //enable signal = D0 of MCU
-#define rs 2                    //register select signal = D2 of MCU
+#define rs 1                    //register select signal = D1 of MCU
 								//read write signal = GND
 
 void lcd_ini(void);						//initialize LCD
