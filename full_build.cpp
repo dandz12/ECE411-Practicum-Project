@@ -13,7 +13,7 @@
 
 #define ctrl PORTD				//4 bits data line = D7-D4 of MCU
 #define en 0                    //enable signal = D0 of MCU
-#define rs 2                    //register select signal = D2 of MCU
+#define rs 1                    //register select signal = D2 of MCU
 
 
 #include <avr/io.h>
@@ -39,7 +39,8 @@ int main(void)
 {
 	int codeIn[length];
 	int result = 0;
-
+	char p = 0;
+	
 	sei();					//enable interrupts
 	//DDRD |= (1 << DDD3);
 	DDRB |= (1 << DDB7);
@@ -55,29 +56,44 @@ int main(void)
 	lcd_ini();                  //Initialization of LCD
 	_delay_ms(30);              // Wait 30ms to make sure that LCD is initialized
 		
-	LCD_write_string("Passcode please:");         // function to print string on LCD	
+	LCD_write_string("Passcode: ");         // function to print string on LCD	
 		
-	/* Replace with your application code */
 	while (1)
 	{
-
-		
 		for(int i = 0; i < length; i ++)
 		{
 			codeIn[i] = getkey();
 
 			/*
 			if(codeIn[i] == -1);
-				//change
+			{
+				//display
+				//enter old
+				//compare input and old
+				//if same 
+				//enter new
+				//else
+				//reset   results = -1
+				//break;
+					//change
+			}
 			else if(codeIn[i] == -2)
-				//reset				
+			{
+				result = -1;		
+				break;
+			}
 				*/
+			p = ((char) codeIn[i] ^ 0x30);
+			LCD_write_string(&p);
 		}
 		
-		for(int i = 0; i < length; i++)
+		if(result == 0)
 		{
-			if(code[i] != codeIn[i])
-					result = 1;			
+			for(int i = 0; i < length; i++)
+			{
+				if(code[i] != codeIn[i])
+						result = 1;			
+			}
 		}
 		
 		if(!result)
@@ -88,7 +104,7 @@ int main(void)
 		else
 			PWM_Init();									// PWM (pulse width modulation) function
 			
-		result = 0;
+		result = 0;										//reset result
 		
 		
 	}
@@ -270,10 +286,16 @@ void LCD_write(unsigned char data) //send 4bits data in 4bits mode (half of a 8 
 void LCD_write_string(char *str)             //store address value of the string in pointer *str
 {
 	int i=0;
-	while(str[i]!='\0')                               // loop will go on till the NULL character in the string
-	{
-		dis_data(str[i]);                            // sending data on LCD byte by byte
-		i++;
+	
+	if((str[i] & 0x30) == 0x30)
+		dis_data(str[i]);
+	else
+	{	
+		while(str[i]!='\0')                               // loop will go on till the NULL character in the string
+		{
+			dis_data(str[i]);                            // sending data on LCD byte by byte
+			i++;
+		}
 	}
 	return;
 }
