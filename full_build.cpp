@@ -40,6 +40,7 @@ void LCD_write_string(char *str);
 int isEqual(int a[], int b[], int n);	//compare two arrays that have same length, 1 = equal, 0 = not equal
 void promptKey(int *array);				//prompt Key, array is a integer array length of 4
 void changePasscode (int *passcode);		//reset sequence to change passcode
+int isNumber(int *array, int N);
 
 int main(void)
 {
@@ -325,5 +326,30 @@ void promptKey(int *array)
 		dis_data((char) array[i] ^ 0x30);
 	}
 	
+	while (!isNumber(array,length))
+	{
+		dis_cmd(0x01);
+		LCD_write_string("enter a NUMBER:");
+		dis_cmd(0xC0);		
+			for (int i = 0; i < length; i++)
+			{
+				array[i] = getkey();
+				dis_data((char) array[i] ^ 0x30);
+			}
+	}
 }
+
+int isNumber(int *array, int N)
+{
+	int tmp = 1;
+	for (int i = 0; i < length; i++)
+	{
+		if ((array[i]<0)|(array[i]>9))
+		{
+			tmp = 0;
+		}
+	}
+	return tmp;
+}
+
 
