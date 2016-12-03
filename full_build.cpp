@@ -19,9 +19,11 @@
 #include <avr/io.h>
 #include <avr/interrupt.h>						// AVR interrupts header file
 #include <util/delay.h>
+#include <avr/wdt.h>
 
 //global definition of our code
 int code[length] = {1, 2, 3, 4};
+int reset[length] = {9, 9, 9, 9};
 
 int getkey(void);
 void blink(int);
@@ -35,12 +37,14 @@ void dis_cmd(char);						//send full 8bits command in 4bits mode
 void dis_data(char);					//send full 8bits data in 4bits mode
 void LCD_write_string(char *str);
 
+int isEqual(int a[], int b[], int n);	//compare two arrays that have same length, 1 = equal, 0 = not equal
+void promptKey(int *array);				//prompt Key, array is a integer array length of 4
+void changePasscode (int *passcode);		//reset sequence to change passcode
+
 int main(void)
 {
 	int codeIn[length];
-	int result = 0;
-	char p = 0;
-	
+
 	sei();					//enable interrupts
 	//DDRD |= (1 << DDD3);
 	DDRB |= (1 << DDB7);
@@ -56,57 +60,24 @@ int main(void)
 	lcd_ini();                  //Initialization of LCD
 	_delay_ms(30);              // Wait 30ms to make sure that LCD is initialized
 		
-	LCD_write_string("Passcode: ");         // function to print string on LCD	
 		
 	while (1)
 	{
-		for(int i = 0; i < length; i ++)
-		{
-			codeIn[i] = getkey();
-
-			/*
-			if(codeIn[i] == -1);
-			{
-				//display
-				//enter old
-				//compare input and old
-				//if same 
-				//enter new
-				//else
-				//reset   results = -1
-				//break;
-					//change
-			}
-			else if(codeIn[i] == -2)
-			{
-				result = -1;		
-				break;
-			}
-				*/
-			p = ((char) codeIn[i] ^ 0x30);
-			LCD_write_string(&p);
-		}
-		
-		if(result == 0)
-		{
-			for(int i = 0; i < length; i++)
-			{
-				if(code[i] != codeIn[i])
-						result = 1;			
-			}
-		}
-		
-		if(!result)
+		dis_cmd(0x01);								 //0x01 = clear LCD
+		LCD_write_string("Enter Pass code: ");       //function to print string on LCD
+		dis_cmd(0xC0);								 //enter second line
+			
+		//check if correct code is entered;
+		promptKey(codeIn);
+		if(isEqual(codeIn,code,length))
 		{
 			unlock();
-			PWM_Init();									// PWM (pulse width modulation) function
+			PWM_Init();									
 		}
-		else
-			PWM_Init();									// PWM (pulse width modulation) function
-			
-		result = 0;										//reset result
 		
-		
+		//check if reset code is entered;
+		if(isEqual(codeIn,reset,length))
+			changePasscode(code);
 	}
 }
 
@@ -251,6 +222,7 @@ void dis_cmd(char cmd_value)	//send full 8bits command in 4bits mode
 	LCD_cmd(cmd_value1);					//send to LCD, use LCD_cmd
 	cmd_value1 = ((cmd_value<<4) & 0xF0);   //shift 4-bit and mask the others 4
 	LCD_cmd(cmd_value1);					//send to LCD, use LCD_cmd
+	_delay_ms(1);
 }
 void dis_data(char data_value)  //send full 8bits data in 4bits mode
 {
@@ -289,7 +261,7 @@ void LCD_write_string(char *str)             //store address value of the string
 	
 	if((str[i] & 0x30) == 0x30)
 		dis_data(str[i]);
-	else
+	else 
 	{	
 		while(str[i]!='\0')                               // loop will go on till the NULL character in the string
 		{
@@ -308,3 +280,50 @@ void unlock(void)
 	_delay_ms(500);
 	
 }
+
+void changePasscode (int *passcode)
+{
+	dis_cmd(0x01);								 //0x01 = clear LCD
+	LCD_write_string("Old pass code?: ");       //function to print string on LCD
+	dis_cmd(0xC0);
+	int codeIn[length];
+	promptKey(codeIn);
+	
+	if(isEqual(codeIn,code,length))	{
+		dis_cmd(0x01);
+		LCD_write_string("New passcode?");
+		dis_cmd(0xC0);
+		int codeNew[length];
+		promptKey(codeNew);
+		for (int i = 0; i < length; i++)
+		code[i] = codeNew[i];
+		
+		dis_cmd(0x01);
+	}
+	else{
+		dis_cmd(0x01);
+		LCD_write_string("Wrong code ...");
+		_delay_ms(1000);
+	}
+}
+
+int isEqual(int a[], int b[], int n)
+{
+	int tmp = 1;
+	for (int i = 0; i < n; i++)
+	if (a[i] != b[i]) tmp = 0;
+	return tmp;
+}
+
+
+
+void promptKey(int *array)
+{
+	for (int i = 0; i < length; i++)
+	{
+		array[i] = getkey();
+		dis_data((char) array[i] ^ 0x30);
+	}
+	
+}
+
