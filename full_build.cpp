@@ -76,17 +76,24 @@ int main(void)
 		{
 			unlock();
 			PWM_Init();									
-		}
-		
-		
+		}		
 		//check if reset code is entered;
-		if(isEqual(codeIn,reset,length))
+		else if(isEqual(codeIn,reset,length))
 			changePasscode(code);
+		else
+		{
+			dis_cmd(0x01);
+			LCD_write_string("Wrong!!!");
+			PWM_Init();
+			_delay_ms(1500);
+		}
 	}
 		else 
 		{
-		LCD_cmd(0x01);
-		_delay_ms(1000);
+		dis_cmd(0x01);
+		LCD_write_string("Get lost!");
+		_delay_ms(2000);
+		dis_cmd(0x01);
 		}
 	}
 }
