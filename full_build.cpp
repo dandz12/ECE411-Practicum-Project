@@ -64,6 +64,8 @@ int main(void)
 		
 	while (1)
 	{
+	if(PINB & (1 << 6))
+	{
 		dis_cmd(0x01);								 //0x01 = clear LCD
 		LCD_write_string("Enter Pass code: ");       //function to print string on LCD
 		dis_cmd(0xC0);								 //enter second line
@@ -76,9 +78,16 @@ int main(void)
 			PWM_Init();									
 		}
 		
+		
 		//check if reset code is entered;
 		if(isEqual(codeIn,reset,length))
 			changePasscode(code);
+	}
+		else 
+		{
+		LCD_cmd(0x01);
+		_delay_ms(1000);
+		}
 	}
 }
 
@@ -89,8 +98,9 @@ int getkey(void)
 	
 	//loop and wait for a button
 	while(1)
+	{	
+	while(PINB & (1<<6))
 	{
-		
 		if((((PINC & 0x03) << 2) | ((PINB & 0x30) >> 4)) != 0x0F)
 		{
 			_delay_ms(5);					//delay to debounce
@@ -164,6 +174,8 @@ int getkey(void)
 			
 			return num;
 		}
+	}
+	return -1;
 	}
 }
 
@@ -323,7 +335,10 @@ void promptKey(int *array)
 	for (int i = 0; i < length; i++)
 	{
 		array[i] = getkey();
+		if(array[i] == -1)
+			return;
 		dis_data((char) array[i] ^ 0x30);
+		
 	}
 	
 	while (!isNumber(array,length))
@@ -351,5 +366,4 @@ int isNumber(int *array, int N)
 	}
 	return tmp;
 }
-
 
