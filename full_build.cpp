@@ -25,20 +25,20 @@
 int code[length] = {1, 2, 3, 4};
 int reset[length] = {9, 9, 9, 9};
 
-int getkey(void);
-void blink(int);
-void unlock(void);
-void PWM_Init(void);
+int getkey(void);						//OK
+void blink(int);						//OK
+void unlock(void);						//OK
+void PWM_Init(void);					//OK
 
-void lcd_ini(void);						//initialize LCD
-void LCD_cmd(unsigned char cmd);		//send 4bits command in 4bits mode (half of a command)
-void LCD_write(unsigned char data);		//send 4bits data in 4bits mode (half of a 8 bit data)
-void dis_cmd(char);						//send full 8bits command in 4bits mode
-void dis_data(char);					//send full 8bits data in 4bits mode
-void LCD_write_string(char *str);
+void lcd_ini(void);						//initialize LCD											//CHecked
+void LCD_cmd(unsigned char cmd);		//send 4bits command in 4bits mode (half of a command)		//fine
+void LCD_write(unsigned char data);		//send 4bits data in 4bits mode (half of a 8 bit data)		//fine
+void dis_cmd(char);						//send full 8bits command in 4bits mode						//fine, 1ms delay,
+void dis_data(char);					//send full 8bits data in 4bits mode						//fine, 1ms delay,
+void LCD_write_string(char *str);																	//make sure that we don't put -1 here
 
-int isEqual(int a[], int b[], int n);	//compare two arrays that have same length, 1 = equal, 0 = not equal
-void promptKey(int *array);				//prompt Key, array is a integer array length of 4
+int isEqual(int a[], int b[], int n);	//compare two arrays that have same length, 1 = equal, 0 = not equal		//OK
+void promptKey(int *array);				//prompt Key, array is a integer array length of 4							//
 void changePasscode (int *passcode);		//reset sequence to change passcode
 int isNumber(int *array, int N);
 
@@ -58,6 +58,7 @@ int main(void)
 	PORTC = 0x03;		//output 5v and pull up
 	PORTB = 0x30;		//output 5v and pull up
 	
+	_delay_ms(30);
 	lcd_ini();                  //Initialization of LCD
 	_delay_ms(30);              // Wait 30ms to make sure that LCD is initialized
 		
@@ -67,8 +68,10 @@ int main(void)
 	if(PINB & (1 << 6))
 	{
 		dis_cmd(0x01);								 //0x01 = clear LCD
+		_delay_ms(1);
 		LCD_write_string("Enter Pass code: ");       //function to print string on LCD
 		dis_cmd(0xC0);								 //enter second line
+		_delay_ms(1);
 			
 		//check if correct code is entered;
 		promptKey(codeIn);
@@ -83,6 +86,7 @@ int main(void)
 		else
 		{
 			dis_cmd(0x01);
+			_delay_ms(1);
 			LCD_write_string("Wrong!!!");
 			PWM_Init();
 			_delay_ms(1500);
@@ -91,9 +95,11 @@ int main(void)
 		else 
 		{
 		dis_cmd(0x01);
+		_delay_ms(1);
 		LCD_write_string("Get lost!");
 		_delay_ms(2000);
 		dis_cmd(0x01);
+		_delay_ms(1);
 		}
 	}
 }
@@ -159,13 +165,10 @@ int getkey(void)
 				case 0b11100111:	//*
 					num = -1;
 					break;
-				case 0b10110111:	//#
-					num = -2;
-					break;
 				//* should change passcode
 				//#should reset
 				default:	//default should be reset
-					num = -2;
+					num = -1;
 					break;
 			}
 
@@ -373,4 +376,3 @@ int isNumber(int *array, int N)
 	}
 	return tmp;
 }
-
