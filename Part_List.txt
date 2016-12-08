@@ -1,6 +1,6 @@
 Partlist exported from /Users/BumBum/Desktop/T09_LockBox_ver5.0.sch at 11/19/16 9:20 PM
 
-Part  Value            Device           Package        Description                                                   PROD_ID    SF_ID     TP_SIGNAL_NAME VALUE           
+Part  Value            Device           Package        Description			
 C1    10uF             CAP0603-CAP      0603-CAP       Capacitor                                                                                                         
 C2    100uF            CAP0603-CAP      0603-CAP       Capacitor                                                                                                         
 C3    100uF            CAP0603-CAP      0603-CAP       Capacitor                                                                                                         
@@ -8,12 +8,12 @@ C4    0.1uF            CAP0603-CAP      0603-CAP       Capacitor
 C5    0.1uF            CAP0603-CAP      0603-CAP       Capacitor                                                                                                         
 C6    100uF            CAP0603-CAP      0603-CAP       Capacitor                                                                                                         
 D3    1N4004DO-214AC   1N4004DO-214AC   DO-214AC       DIODE                                                                                                             
-J1    5.5x2.1mm Barrel POWER_JACKSMD    POWER_JACK_SMD Power Jack                                                    CONN-08106 PRT-12748                5.5x2.1mm Barrel
-J2    2Pin-Solenoid    M02PTH           1X02           Standard 2-pin 0.1" header. Use with                                                                              
+J1    5.5x2.1mm Barrel POWER_JACKSMD    POWER_JACK_SMD Power Jack                                                 
+J2    2Pin-Solenoid    M02PTH           1X02           Header 2                                                                             
 J3    3Pin-Servo       M03PTH           1X03           Header 3                                                                                                          
-J4    2Pin-Toggle      M02PTH           1X02           Standard 2-pin 0.1" header. Use with                                                                              
-J5    FEMALE 2x3       M03X2FEMALE      2X3            2x3 .1" header.                                               CONN-11566                          FEMALE 2x3      
-J6    8Pin-Keypad      M08              1X08_ROUND     Header 8                                                      CONN-08437                                          
+J4    2Pin-Toggle      M02PTH           1X02           Header 2
+J5    FEMALE 2x3       M03X2FEMALE      2X3            2x3 .1" header                                             
+J6    8Pin-Keypad      M08              1X08_ROUND     Header 8                                                   
 J7    7Pin-LCD-Control M07              1X07           Header 7                                                                                                          
 J8    5Pin-LCD-Power   M05PTH           1X05           Header 5                                                                                                          
 R3    47               RESISTOR0805-RES 0805           Resistor                                                                                                          
@@ -24,10 +24,10 @@ R7    820              RESISTOR0603     0603-RES       Resistor
 R11   0                RESISTOR0603     0603-RES       Resistor                                                                                                          
 R12   0                RESISTOR0603     0603-RES       Resistor                                                                                                          
 R13   0                RESISTOR0603     0603-RES       Resistor                                                                                                          
-T2    TIP31            TIP31            TO220          NPN Transistor  Medium Power Linear Switching Applications                                                        
+T2    TIP31            TIP31            TO220          NPN Transistor                                                         
 TP1   TPPAD1-13        TPPAD1-13        P1-13          Test pad                                                                                                          
 TP2   TPPAD1-13        TPPAD1-13        P1-13          Test pad                                                                                                          
 TP3   TPPAD1-13        TPPAD1-13        P1-13          Test pad                                                                                                          
-TP4   TPPAD1-13        TPPAD1-13        P1-13 in         Test pad                                                                                                          
+TP4   TPPAD1-13        TPPAD1-13        P1-13 in       Test pad                                                                                                          
 U1    ATMEGA328P_PDIP  ATMEGA328P_PDIP  DIL28-3        uC used in the Arduino                                                                                            
-V_REG LD117AS12TR      LD117AS12TR      SOT223         Low drop fixed and adjustable positive voltage regulators 1 A                                                     
+V_REG LD117AS12TR      LD117AS12TR      SOT223         Positive voltage regulators 1A                                                     
